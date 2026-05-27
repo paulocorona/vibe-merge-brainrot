@@ -1,0 +1,1153 @@
+:root {
+  --design-width: 414px;
+  --design-height: 820px;
+
+  /* Sky / water */
+  --sky-top: #8edcff;
+  --sky-mid: #66c1f5;
+  --sky-bottom: #3f9ddb;
+  --water: #2e7eb9;
+  --cloud: #ffffff;
+
+  /* Wood / panel */
+  --wood-light: #a47148;
+  --wood-mid: #7a4e2b;
+  --wood-dark: #4f3018;
+  --wood-stroke: #2e1a0a;
+
+  /* Cartoon buttons */
+  --btn-orange-top: #ffd24a;
+  --btn-orange-mid: #ffae3a;
+  --btn-orange-bot: #ed7a20;
+  --btn-orange-stroke: #6b3611;
+
+  --btn-blue-top: #6cc6ff;
+  --btn-blue-mid: #4a9ee6;
+  --btn-blue-bot: #2d6fad;
+  --btn-blue-stroke: #122c50;
+
+  --btn-red-top: #ff8b8b;
+  --btn-red-mid: #ee5050;
+  --btn-red-bot: #b62a2a;
+  --btn-red-stroke: #4a0d0d;
+
+  --btn-green-top: #a0e36b;
+  --btn-green-mid: #6ec538;
+  --btn-green-bot: #3f8717;
+  --btn-green-stroke: #1c3c08;
+
+  /* Text */
+  --text: #ffffff;
+  --text-dark: #4a2e16;
+  --text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+
+  /* Notification */
+  --badge: #ee2c2c;
+
+  --radius: 18px;
+  --tile-radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Comic Sans MS", "Baloo 2", "Fredoka", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  touch-action: none;
+  background: linear-gradient(180deg, #5fbdee 0%, #2e7eb9 60%, #1c5f8e 100%);
+}
+
+#game-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============ Phone frame ============ */
+
+#phone-frame {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: var(--design-width);
+  max-height: var(--design-height);
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+  padding: 14px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  background:
+    url("/assets/ui/background.png") center center / cover no-repeat,
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  overflow: hidden;
+}
+
+@media (min-width: 500px) and (min-height: 800px) {
+  #phone-frame {
+    border-radius: 36px;
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.4),
+      inset 0 0 0 4px rgba(255, 255, 255, 0.5),
+      inset 0 0 0 6px rgba(0, 0, 0, 0.25);
+  }
+}
+
+#top-bar,
+#recipe-bar,
+#bottom-bar {
+  position: relative;
+  z-index: 2;
+}
+
+#board-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  /*
+   * Critical: without `min-height: 0` the grid row "1fr" refuses to shrink
+   * below the canvas's intrinsic content size, which expands as the
+   * renderer sets the canvas drawing buffer. The 8x8 board exposed this
+   * by pushing the bottom bar off the bottom of the phone frame.
+   */
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#game-canvas {
+  /*
+   * Canvas fills board-stage. Both min-width/min-height: 0 prevent the
+   * canvas's drawing-buffer attribute (which the renderer sizes
+   * dynamically) from becoming the grid row's min-content size and
+   * blowing out the layout.
+   */
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+  touch-action: none;
+}
+
+#canvas-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+#modal-root,
+#popup-root,
+#tooltip-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#modal-root > *,
+#popup-root > *,
+#tooltip-root > * {
+  pointer-events: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ============ Cartoon button base ============ */
+
+.cbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  border: 3px solid var(--btn-orange-stroke);
+  background: linear-gradient(180deg, var(--btn-orange-top) 0%, var(--btn-orange-mid) 55%, var(--btn-orange-bot) 100%);
+  box-shadow:
+    0 5px 0 var(--btn-orange-stroke),
+    0 6px 10px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+  color: var(--text-dark);
+}
+
+.cbtn:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 2px 0 var(--btn-orange-stroke),
+    0 2px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.cbtn.blue {
+  border-color: var(--btn-blue-stroke);
+  background: linear-gradient(180deg, var(--btn-blue-top) 0%, var(--btn-blue-mid) 55%, var(--btn-blue-bot) 100%);
+  box-shadow:
+    0 5px 0 var(--btn-blue-stroke),
+    0 6px 10px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+.cbtn.blue:active {
+  box-shadow:
+    0 2px 0 var(--btn-blue-stroke),
+    0 2px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.cbtn.red {
+  border-color: var(--btn-red-stroke);
+  background: linear-gradient(180deg, var(--btn-red-top) 0%, var(--btn-red-mid) 55%, var(--btn-red-bot) 100%);
+  box-shadow:
+    0 5px 0 var(--btn-red-stroke),
+    0 6px 10px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+.cbtn.red:active {
+  box-shadow:
+    0 2px 0 var(--btn-red-stroke),
+    0 2px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.cbtn.green {
+  border-color: var(--btn-green-stroke);
+  background: linear-gradient(180deg, var(--btn-green-top) 0%, var(--btn-green-mid) 55%, var(--btn-green-bot) 100%);
+  box-shadow:
+    0 5px 0 var(--btn-green-stroke),
+    0 6px 10px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+.cbtn.green:active {
+  box-shadow:
+    0 2px 0 var(--btn-green-stroke),
+    0 2px 5px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Notification badge */
+.notify-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--badge);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* ============ Top Bar (coin counter) ============ */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.coin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 12px;
+  border: 3px solid var(--wood-stroke);
+  border-radius: 30px;
+  background: linear-gradient(180deg, #ffe27a 0%, #e8a93c 100%);
+  box-shadow:
+    0 4px 0 var(--wood-stroke),
+    0 5px 8px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  min-width: 150px;
+  height: 44px;
+}
+
+.coin-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3a8 0%, #ffd84a 40%, #c78a18 100%);
+  border: 2px solid #5b3409;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b3a09;
+  font-weight: 900;
+  font-size: 16px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.coin-value {
+  flex: 1;
+  color: var(--text-dark);
+  font-weight: 900;
+  font-size: 19px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.5px;
+}
+
+.coin-rate {
+  font-size: 11px;
+  color: rgba(74, 46, 22, 0.7);
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+.coin-add {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--btn-green-stroke);
+  background: linear-gradient(180deg, var(--btn-green-top) 0%, var(--btn-green-mid) 60%, var(--btn-green-bot) 100%);
+  box-shadow:
+    0 2px 0 var(--btn-green-stroke),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: var(--text-shadow);
+  line-height: 1;
+  padding: 0 0 3px 0;
+  transition: transform 60ms ease-out;
+}
+
+.coin-add:active {
+  transform: translateY(1px);
+}
+
+/* ============ Side button row (Daily Rewards | Recipe | Shop) ============ */
+
+.recipe-bar {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.side-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 4px;
+  min-height: 92px;
+}
+
+.side-btn .side-btn-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+}
+
+.side-btn .side-btn-label {
+  font-weight: 800;
+  font-size: 11px;
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 4px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.5px;
+  line-height: 1.05;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ============ Recipe Panel ============ */
+
+.recipe-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 6px 8px 8px;
+  border: 3px solid var(--wood-stroke);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffe9a8 0%, #f2b652 60%, #db8924 100%);
+  box-shadow:
+    0 4px 0 var(--wood-stroke),
+    0 5px 8px rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+
+.recipe-title {
+  font-weight: 800;
+  font-size: 11px;
+  text-align: center;
+  color: var(--text-dark);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.recipe-fusion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.recipe-fusion canvas {
+  display: block;
+}
+
+.recipe-fusion .rf-sign {
+  color: var(--text-dark);
+  font-weight: 900;
+  font-size: 18px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.recipe-name {
+  text-align: center;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #ffffff;
+  background: var(--wood-stroke);
+  padding: 4px 6px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  margin-top: 2px;
+}
+
+.recipe-chains-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.recipe-chain {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-dark);
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.recipe-chain .rc-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.recipe-chain.creature {
+  color: #2f5e0e;
+}
+
+.recipe-chain.machine {
+  color: #143769;
+}
+
+.recipe-chain .rc-bar {
+  position: relative;
+  height: 9px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1.5px solid rgba(0, 0, 0, 0.4);
+}
+
+.recipe-chain .rc-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(180deg, currentColor 0%, currentColor 100%);
+  transition: width 220ms ease-out;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.recipe-chain .rc-level {
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+  text-align: right;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+/* ============ Bottom Bar ============ */
+
+.bottom-bar {
+  display: grid;
+  grid-template-columns: 86px 1fr 86px;
+  gap: 6px;
+  align-items: end;
+  padding: 0 2px;
+}
+
+/*
+ * Art-driven buttons: the PNGs already include the button visual, shadow,
+ * label, and border. Our wrapper is just an unstyled button with a press
+ * effect and a hit target.
+ */
+.bb-art-btn {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 92px;
+  transition: transform 70ms ease-out, filter 70ms ease-out;
+  overflow: visible;
+}
+
+.bb-art-btn img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.bb-art-btn:active {
+  transform: translateY(3px);
+  filter: brightness(0.92);
+}
+
+/*
+ * Spawn stack: dynamic "N TAPS / SPAWN" label sitting above the spawn
+ * button. Both share the middle column and are bottom-aligned so the
+ * button sits flush with the corner buttons while the label floats just
+ * above the top edge of the artwork.
+ */
+.bb-spawn-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bb-spawn-toplabel {
+  text-align: center;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow:
+    -2px 0 0 var(--btn-orange-stroke),
+    2px 0 0 var(--btn-orange-stroke),
+    0 -2px 0 var(--btn-orange-stroke),
+    0 2px 0 var(--btn-orange-stroke),
+    -2px -2px 0 var(--btn-orange-stroke),
+    2px -2px 0 var(--btn-orange-stroke),
+    -2px 2px 0 var(--btn-orange-stroke),
+    2px 2px 0 var(--btn-orange-stroke),
+    0 3px 5px rgba(0, 0, 0, 0.5);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  padding: 0 4px;
+  animation: taps-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes taps-pulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/*
+ * Bigger spawn button to make it the obvious primary action. We allow it
+ * to overflow upward (height larger than the corner buttons) and rely on
+ * the column being 1fr to give it room to breathe horizontally.
+ */
+.bb-art-btn.bb-spawn {
+  height: 128px;
+}
+
+.bb-art-btn.bb-spawn img {
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  object-position: center;
+}
+
+/* Press flash overlay — kept generic so it works on the art button. */
+.bb-art-btn.bb-spawn.flash::after {
+  content: "";
+  position: absolute;
+  inset: 6% 4% 12% 4%;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 22px;
+  animation: spawn-flash 280ms ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes spawn-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/*
+ * Spawn meter — slim progress bar overlaid near the bottom of the spawn
+ * button image so the player sees how close the next spawn is.
+ */
+/*
+ * Spawn meter sits inside the dedicated empty strip near the bottom of
+ * the new TAP TO SPAWN artwork. Tuned to the button's interior padding so
+ * it nestles neatly under the text without overlapping the drop shadow
+ * lip at the bottom of the PNG.
+ */
+.bb-spawn-meter {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 30%;
+  height: 10px;
+  background: #4a2207;
+  border: 1.5px solid #2b1304;
+  border-radius: 6px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow:
+    inset 0 1.5px 2px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.bb-spawn-meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(180deg, #d6ff7a 0%, #7cdb2b 55%, #3f9617 100%);
+  border-radius: 5px;
+  transition: width 80ms linear;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 6px rgba(124, 219, 43, 0.7);
+}
+
+/* ============ Combo flash overlay ============ */
+
+.combo-flash {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 900;
+  font-size: 24px;
+  color: #ffffff;
+  text-shadow:
+    0 0 10px rgba(255, 216, 74, 0.9),
+    0 2px 0 rgba(0, 0, 0, 0.6),
+    -2px 0 0 var(--btn-orange-stroke),
+    2px 0 0 var(--btn-orange-stroke),
+    0 -2px 0 var(--btn-orange-stroke),
+    0 2px 0 var(--btn-orange-stroke);
+  animation: combo-pop 800ms ease-out forwards;
+  z-index: 5;
+}
+
+@keyframes combo-pop {
+  0% {
+    transform: translate(-50%, 0) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-50%, -10px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -56px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============ Tooltips ============ */
+
+.tooltip {
+  position: absolute;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #fff5d8 0%, #ffd987 100%);
+  border-radius: 12px;
+  border: 2.5px solid var(--wood-stroke);
+  box-shadow: 0 4px 0 var(--wood-stroke), 0 4px 8px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-dark);
+  white-space: nowrap;
+  animation: tooltip-bob 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+}
+
+.tooltip.below::after {
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: var(--wood-stroke);
+}
+
+.tooltip.above::after {
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: var(--wood-stroke);
+}
+
+@keyframes tooltip-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ============ Modal ============ */
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 180ms ease-out;
+  padding: 16px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(180deg, #fff3d4 0%, #f0c073 50%, #d99845 100%);
+  border: 4px solid var(--wood-stroke);
+  border-radius: 24px;
+  box-shadow: 0 6px 0 var(--wood-stroke), 0 20px 60px rgba(0, 0, 0, 0.5);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: modal-rise 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-dark);
+}
+
+@keyframes modal-rise {
+  from {
+    transform: translateY(20px) scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #ffffff;
+  text-shadow: 0 2px 0 var(--wood-stroke);
+  text-transform: uppercase;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--btn-red-stroke);
+  background: linear-gradient(180deg, var(--btn-red-top) 0%, var(--btn-red-mid) 60%, var(--btn-red-bot) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  box-shadow:
+    0 3px 0 var(--btn-red-stroke),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.modal-close:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 var(--btn-red-stroke),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.modal-sub {
+  font-size: 12px;
+  color: var(--text-dark);
+  margin-top: -8px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+/* INDEX modal cards */
+
+.index-card {
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffe9a8 0%, #f5c469 60%, #df9b3a 100%);
+  border: 3px solid var(--wood-stroke);
+  box-shadow: 0 3px 0 var(--wood-stroke), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.index-card .ic-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.index-card .ic-portrait {
+  width: 76px;
+  height: 76px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3e5c0 100%);
+  border: 3px solid var(--wood-stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.index-card.locked .ic-portrait {
+  filter: grayscale(1) brightness(0.6);
+  background: linear-gradient(180deg, #dad1bf 0%, #b09e7c 100%);
+}
+
+.index-card.locked .ic-portrait::after {
+  content: "?";
+  font-size: 36px;
+  font-weight: 900;
+  color: #4a3920;
+}
+
+.index-card.locked .ic-portrait canvas {
+  display: none;
+}
+
+.index-card .ic-name {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--text-dark);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.index-card .ic-tagline {
+  font-size: 11px;
+  color: rgba(74, 46, 22, 0.7);
+  font-style: italic;
+  font-weight: 600;
+}
+
+.index-card .ic-passive {
+  font-size: 12px;
+  font-weight: 800;
+  color: #2f5e0e;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.index-card .ic-rarity {
+  display: inline-block;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.index-card .ic-recipe-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.index-card .ic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  border: 2px solid var(--wood-stroke);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.index-card .ic-chip canvas {
+  border-radius: 8px;
+}
+
+.index-card .ic-plus {
+  color: var(--text-dark);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.index-card .ic-chip.fusion {
+  background: linear-gradient(180deg, #ff7adf 0%, #c84aa6 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.index-progress {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dark);
+  opacity: 0.85;
+  font-weight: 700;
+}
+
+/* ============ Unlock Popup ============ */
+
+.unlock-popup-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 122, 223, 0.25), rgba(0, 0, 0, 0.85));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 200ms ease-out;
+  overflow: hidden;
+}
+
+.unlock-rays {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.2) 0deg 10deg,
+    transparent 10deg 30deg,
+    rgba(255, 255, 255, 0.16) 30deg 40deg,
+    transparent 40deg 60deg,
+    rgba(255, 255, 255, 0.12) 60deg 70deg,
+    transparent 70deg 90deg
+  );
+  animation: rays-spin 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rays-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.unlock-card {
+  position: relative;
+  width: 280px;
+  padding: 24px 18px;
+  background: linear-gradient(180deg, #fff3d4 0%, #f0c073 100%);
+  border: 4px solid var(--wood-stroke);
+  border-radius: 26px;
+  box-shadow: 0 8px 0 var(--wood-stroke), 0 0 60px rgba(255, 122, 223, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  animation: card-pop 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-dark);
+}
+
+@keyframes card-pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.unlock-card .uc-badge {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 900;
+  background: var(--wood-stroke);
+  padding: 4px 10px;
+  border-radius: 10px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.unlock-card .uc-portrait {
+  width: 140px;
+  height: 140px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3e5c0 100%);
+  border: 4px solid var(--wood-stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.unlock-card .uc-name {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 0 var(--wood-stroke);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.unlock-card .uc-tagline {
+  font-size: 12px;
+  color: rgba(74, 46, 22, 0.8);
+  font-style: italic;
+  font-weight: 700;
+}
+
+.unlock-card .uc-cta {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(74, 46, 22, 0.65);
+  font-weight: 700;
+}
+
+.unlock-flying-icon {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3e5c0 100%);
+  border: 3px solid var(--wood-stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(255, 122, 223, 0.8);
+  pointer-events: none;
+  z-index: 11;
+}
+
+/* ============ Confirm pill ============ */
+
+.confirm-pill {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--btn-red-top) 0%, var(--btn-red-mid) 60%, var(--btn-red-bot) 100%);
+  border: 3px solid var(--btn-red-stroke);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 4px 0 var(--btn-red-stroke), 0 6px 14px rgba(0, 0, 0, 0.4);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 8;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.confirm-pill button {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 800;
+  font-size: 13px;
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.confirm-pill button.yes {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.65);
+}

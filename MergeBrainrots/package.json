@@ -1,0 +1,18 @@
+{
+  "name": "brainrot-merge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Brainrot Merge — a tactile collectible dopamine machine built around absurd meme discovery.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0"
+  }
+}
