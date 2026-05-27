@@ -69,7 +69,6 @@ const EGG_FILL = "#f3e1b8";
 const EGG_STROKE = "#7a5a32";
 const CROC_BODY = "#7ec25b";
 const CROC_BODY_DARK = "#4f8d3a";
-const CROC_BELLY = "#e6dca0";
 const TOOTH = "#ffffff";
 
 function drawEggBase(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number): void {

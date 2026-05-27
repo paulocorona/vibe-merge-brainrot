@@ -11,7 +11,6 @@ export interface RecipeBarHandlers {
 
 export class RecipeBar {
   private readonly host: HTMLElement;
-  private readonly state: GameState;
   private readonly getBoard: () => Board;
   private readonly handlers: RecipeBarHandlers;
   private currentRecipeId: string | null = null;
@@ -22,7 +21,6 @@ export class RecipeBar {
 
   constructor(host: HTMLElement, state: GameState, getBoard: () => Board, handlers: RecipeBarHandlers) {
     this.host = host;
-    this.state = state;
     this.getBoard = getBoard;
     this.handlers = handlers;
     this.host.classList.add("recipe-bar");
