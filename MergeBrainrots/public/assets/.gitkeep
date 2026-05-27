@@ -1,0 +1,4 @@
+# Real art assets get dropped into this tree. Until then the deploy
+# workflow runs `scripts/generate-placeholders.mjs` to materialize 1x1
+# transparent PNGs at the paths the source code references, so nothing
+# 404s on the live site.

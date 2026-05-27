@@ -29,7 +29,10 @@ interface Hsl {
   l: number; // [0, 1]
 }
 
-const SOURCE_URL = "/assets/ui/tile-base.png";
+// Resolved against `import.meta.env.BASE_URL` so the path works both in
+// dev (served from `/`) and on GitHub Pages (served from a project
+// subpath).
+const SOURCE_URL = `${import.meta.env.BASE_URL}assets/ui/tile-base.png`;
 
 // Empty cell uses a single tint for both image regions so the tile
 // reads as a uniform dark grey button (no leftover "dirt" band under

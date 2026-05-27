@@ -89,8 +89,14 @@ body {
   grid-template-rows: auto auto 1fr auto;
   gap: 10px;
   padding: 14px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  /*
+   * --bg-url is set from main.ts using import.meta.env.BASE_URL so the
+   * background asset URL respects whatever subpath the app is served
+   * from (root in dev, /vibe-merge-brainrot/ on GitHub Pages). The
+   * fallback `none` keeps the gradient visible if JS hasn't run yet.
+   */
   background:
-    url("/assets/ui/background.png") center center / cover no-repeat,
+    var(--bg-url, none) center center / cover no-repeat,
     linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
   overflow: hidden;
 }

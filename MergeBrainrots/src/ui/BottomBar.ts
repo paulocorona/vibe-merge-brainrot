@@ -32,21 +32,25 @@ export class BottomBar {
     this.state = state;
     this.handlers = handlers;
     this.host.classList.add("bottom-bar");
+    // BASE_URL ends in `/` (e.g. `/` in dev, `/vibe-merge-brainrot/` on
+    // Pages). Concatenating without a leading slash on the asset path
+    // gives a URL that resolves correctly under any deployment subpath.
+    const base = import.meta.env.BASE_URL;
     this.host.innerHTML = `
       <button class="bb-art-btn bb-index" data-role="index" aria-label="Open INDEX" title="Open INDEX">
-        <img src="/assets/ui/btn-index.png" alt="INDEX" draggable="false" />
+        <img src="${base}assets/ui/btn-index.png" alt="INDEX" draggable="false" />
       </button>
       <div class="bb-spawn-stack">
         <div class="bb-spawn-toplabel" data-role="taps-label">10 TAPS / SPAWN</div>
         <button class="bb-art-btn bb-spawn" data-role="spawn" aria-label="Tap to spawn">
-          <img src="/assets/ui/btn-spawn.png" alt="TAP TO SPAWN" draggable="false" />
+          <img src="${base}assets/ui/btn-spawn.png" alt="TAP TO SPAWN" draggable="false" />
           <span class="bb-spawn-meter">
             <span class="bb-spawn-meter-fill" data-role="meter"></span>
           </span>
         </button>
       </div>
       <button class="bb-art-btn bb-wipe" data-role="clear" aria-label="Wipe board" title="Wipe the board">
-        <img src="/assets/ui/btn-wipe.png" alt="WIPE" draggable="false" />
+        <img src="${base}assets/ui/btn-wipe.png" alt="WIPE" draggable="false" />
       </button>
     `;
     this.spawnBtn = this.host.querySelector('[data-role="spawn"]') as HTMLButtonElement;

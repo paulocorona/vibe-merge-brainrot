@@ -2,6 +2,8 @@
 
 A tactile collectible dopamine machine built around absurd meme discovery.
 
+**Play it online:** <https://paulocorona.github.io/vibe-merge-brainrot/>
+
 This is the **v0 prototype** of the game described in [DevelopmentPlan.md](DevelopmentPlan.md).
 It implements the GDD §24 Prototype scope: a 4x4 grid, tap-to-spawn, drag-to-merge,
 and a single Brainrot — **Bombardiero Cocodrilo** — discoverable end-to-end.
@@ -84,6 +86,21 @@ either rewrite the corresponding draw function or load an image and
 `ctx.drawImage(img, cx - size/2, cy - size/2, size, size)` in its place.
 Everything downstream (board, animations, UI chrome) goes through the
 same registry so changes propagate everywhere.
+
+The bottom-bar buttons, tile sprite, phone-frame background, and the
+machine-chain piece images are loaded by URL from `public/assets/`. The
+deploy workflow runs `scripts/generate-placeholders.mjs` before each
+build, which writes 1x1 transparent PNGs at the expected paths if real
+art isn't present yet — drop final PNGs into the matching paths under
+`public/assets/` to override the placeholders (the script skips files
+that already exist).
+
+## Deploying
+
+A push to `main` or `master` triggers
+[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml), which
+builds `MergeBrainrots` and publishes to GitHub Pages. The first
+successful run goes live at the URL above.
 
 ## What's deferred (vertical slice / V1)
 

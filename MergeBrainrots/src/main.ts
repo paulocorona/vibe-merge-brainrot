@@ -12,6 +12,14 @@ import { TopBar } from "./ui/TopBar";
 import { UnlockPopup } from "./ui/UnlockPopup";
 
 async function bootstrap(): Promise<void> {
+  // Set the phone-frame background image URL via a CSS variable so it
+  // respects whatever subpath the app is served from. CSS `url()` can't
+  // see `import.meta.env.BASE_URL`, so we plumb it through here.
+  document.documentElement.style.setProperty(
+    "--bg-url",
+    `url("${import.meta.env.BASE_URL}assets/ui/background.png")`,
+  );
+
   // Preload art assets before constructing the UI so static icon
   // canvases (RecipeBar, IndexModal, UnlockPopup) blit the real PNGs
   // on first paint rather than the procedural fallback. The board

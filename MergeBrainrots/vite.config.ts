@@ -1,8 +1,12 @@
 import { defineConfig } from "vite";
 
-export default defineConfig({
+// On GitHub Pages this project is served from
+// https://paulocorona.github.io/vibe-merge-brainrot/, so production builds
+// need a matching base path. Dev keeps `/` so localhost still serves at the
+// root and `import.meta.env.BASE_URL` resolves to `/` during `vite dev`.
+export default defineConfig(({ command }) => ({
   root: ".",
-  base: "./",
+  base: command === "build" ? "/vibe-merge-brainrot/" : "/",
   server: {
     host: true,
     port: 5173,
@@ -14,4 +18,4 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
-});
+}));
