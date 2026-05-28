@@ -1,5 +1,5 @@
 import type { Board } from "../game/Board";
-import { getBrainrot } from "../game/data/brainrots";
+import { tryGetBrainrot } from "../game/data/brainrots";
 import { ChainId, CHAIN_LABEL, MAX_LEVEL, pieceId } from "../game/data/pieces";
 import { GameState } from "../game/GameState";
 import { createBrainrotIconCanvas, createPieceIconCanvas } from "../render/icons/PieceIcons";
@@ -67,12 +67,11 @@ export class RecipeBar {
     });
     this.host.appendChild(shopBtn);
 
-    const recipeId = this.currentRecipeId;
-    if (!recipeId) {
+    const recipe = tryGetBrainrot(this.currentRecipeId);
+    if (!recipe) {
       panel.innerHTML = `<div class="recipe-title">No recipe tracked</div>`;
       return;
     }
-    const recipe = getBrainrot(recipeId);
 
     const title = document.createElement("div");
     title.className = "recipe-title";

@@ -1,6 +1,9 @@
+import { BRAINROTS } from "../game/data/brainrots";
 import type { GameState, PersistedState } from "../game/GameState";
 
 const STORAGE_KEY = "brainrot-merge:v0";
+
+const KNOWN_BRAINROT_IDS = new Set(BRAINROTS.map((b) => b.id));
 
 export function loadState(): Partial<PersistedState> {
   if (typeof localStorage === "undefined") return {};
@@ -57,11 +60,23 @@ function sanitize(input: Partial<PersistedState>): Partial<PersistedState> {
     out.currency = input.currency;
   }
   if (Array.isArray(input.unlockedBrainrots)) {
-    out.unlockedBrainrots = input.unlockedBrainrots.filter((s): s is string => typeof s === "string");
+    // Drop unknown ids so a stale save (e.g. from before a brainrot
+    // rename) doesn't surface unresolvable entries to the UI.
+    out.unlockedBrainrots = input.unlockedBrainrots.filter(
+      (s): s is string => typeof s === "string" && KNOWN_BRAINROT_IDS.has(s),
+    );
   }
-  if (input.trackedBrainrotId === null || typeof input.trackedBrainrotId === "string") {
+  if (input.trackedBrainrotId === null) {
+    out.trackedBrainrotId = null;
+  } else if (
+    typeof input.trackedBrainrotId === "string" &&
+    KNOWN_BRAINROT_IDS.has(input.trackedBrainrotId)
+  ) {
     out.trackedBrainrotId = input.trackedBrainrotId;
   }
+  // Unknown id (e.g. saved from before a brainrot rename) → omit so the
+  // DEFAULT_STATE value takes over and the user lands on a tracked
+  // brainrot instead of an empty recipe panel.
   if (typeof input.spawnUpgradeLevel === "number" && input.spawnUpgradeLevel >= 0) {
     out.spawnUpgradeLevel = Math.floor(input.spawnUpgradeLevel);
   }

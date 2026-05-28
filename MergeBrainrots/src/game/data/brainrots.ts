@@ -17,9 +17,9 @@ export interface BrainrotRecipe {
   readonly passiveIncomePerSec: number;
 }
 
-export const BOMBARDIERO_CROCODILO: BrainrotRecipe = {
-  id: "bombardiero-crocodilo",
-  displayName: "Bombardiero Cocodrilo",
+export const BOMBARDINO_COCODRILO: BrainrotRecipe = {
+  id: "bombardino-cocodrilo",
+  displayName: "Bombardino Cocodrilo",
   tagline: "The croc that drops the beat… and the bombs.",
   emoji: "🐊✈️",
   color: "#ff7adf",
@@ -33,7 +33,7 @@ export const BOMBARDIERO_CROCODILO: BrainrotRecipe = {
   passiveIncomePerSec: 5,
 };
 
-export const BRAINROTS: readonly BrainrotRecipe[] = [BOMBARDIERO_CROCODILO];
+export const BRAINROTS: readonly BrainrotRecipe[] = [BOMBARDINO_COCODRILO];
 
 const BY_ID: Map<string, BrainrotRecipe> = new Map(BRAINROTS.map((b) => [b.id, b]));
 
@@ -41,6 +41,11 @@ export function getBrainrot(id: string): BrainrotRecipe {
   const recipe = BY_ID.get(id);
   if (!recipe) throw new Error(`Unknown brainrot: ${id}`);
   return recipe;
+}
+
+export function tryGetBrainrot(id: string | null | undefined): BrainrotRecipe | null {
+  if (!id) return null;
+  return BY_ID.get(id) ?? null;
 }
 
 export function findBrainrotForFusion(

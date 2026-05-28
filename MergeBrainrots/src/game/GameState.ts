@@ -26,6 +26,18 @@ export class GameState {
 
   constructor(initial: Partial<PersistedState> = {}) {
     this.state = { ...DEFAULT_STATE, ...initial };
+    // Heal stale tracked ids (e.g. a brainrot was renamed since the
+    // last save): if the persisted id no longer matches any known
+    // brainrot, fall back to the default. v1 has no UI for the user
+    // to explicitly untrack, so a null here is always a bug from a
+    // prior session, not intent.
+    const trackedId = this.state.trackedBrainrotId;
+    if (trackedId !== null && !BRAINROTS.some((b) => b.id === trackedId)) {
+      this.state.trackedBrainrotId = DEFAULT_STATE.trackedBrainrotId;
+    }
+    if (this.state.trackedBrainrotId === null && DEFAULT_STATE.trackedBrainrotId !== null) {
+      this.state.trackedBrainrotId = DEFAULT_STATE.trackedBrainrotId;
+    }
   }
 
   snapshot(): PersistedState {

@@ -6,7 +6,7 @@ A tactile collectible dopamine machine built around absurd meme discovery.
 
 This is the **v0 prototype** of the game described in [DevelopmentPlan.md](DevelopmentPlan.md).
 It implements the GDD §24 Prototype scope: a 4x4 grid, tap-to-spawn, drag-to-merge,
-and a single Brainrot — **Bombardiero Cocodrilo** — discoverable end-to-end.
+and a single Brainrot — **Bombardino Cocodrilo** — discoverable end-to-end.
 
 ## Stack
 
@@ -61,7 +61,7 @@ MergeBrainrots/
 ## What's in v0
 
 - 4x4 grid, drag to merge
-- One Brainrot — Bombardiero Cocodrilo — with two **5-level** chains
+- One Brainrot — Bombardino Cocodrilo — with two **5-level** chains
   - Creature: Egg → Cracked Egg → Hatching Egg → Baby Crocodile → Adult Crocodile
   - Machine: Gear → Screw & Nut → Turbine → Motor → Airplane
 - Cartoon visual reskin: bright sky/water background, green tiles on

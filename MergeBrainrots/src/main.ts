@@ -1,6 +1,7 @@
 import { AudioManager } from "./audio/AudioManager";
 import { Game } from "./game/Game";
 import { attachAutoSave, loadState } from "./persist/Save";
+import { preloadBrainrotImages } from "./render/icons/BrainrotImages";
 import { preloadPieceImages } from "./render/icons/PieceImages";
 import { preloadTileSprite } from "./render/TileSprite";
 import { BottomBar } from "./ui/BottomBar";
@@ -31,6 +32,9 @@ async function bootstrap(): Promise<void> {
     }),
     preloadPieceImages().catch((err) => {
       console.error("[piece-images] preload failed", err);
+    }),
+    preloadBrainrotImages().catch((err) => {
+      console.error("[brainrot-images] preload failed", err);
     }),
   ]);
 

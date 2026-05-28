@@ -18,9 +18,9 @@ export const MAX_LEVEL = 5;
 export const PIECES: readonly PieceDef[] = [
   { id: "creature-1", chain: "creature", level: 1, displayName: "Egg",              mergeReward: 1 },
   { id: "creature-2", chain: "creature", level: 2, displayName: "Cracked Egg",      mergeReward: 4 },
-  { id: "creature-3", chain: "creature", level: 3, displayName: "Hatching Egg",     mergeReward: 14 },
-  { id: "creature-4", chain: "creature", level: 4, displayName: "Baby Crocodile",   mergeReward: 45 },
-  { id: "creature-5", chain: "creature", level: 5, displayName: "Adult Crocodile",  mergeReward: 140 },
+  { id: "creature-3", chain: "creature", level: 3, displayName: "Baby Croc",        mergeReward: 14 },
+  { id: "creature-4", chain: "creature", level: 4, displayName: "Young Croc",       mergeReward: 45 },
+  { id: "creature-5", chain: "creature", level: 5, displayName: "Adult Croc",       mergeReward: 140 },
 
   { id: "machine-1", chain: "machine", level: 1, displayName: "Gear",          mergeReward: 1 },
   { id: "machine-2", chain: "machine", level: 2, displayName: "Screw & Nut",   mergeReward: 4 },

@@ -11,6 +11,7 @@
  * an image is missing or hasn't finished decoding yet.
  */
 
+import { getBrainrotImage } from "./BrainrotImages";
 import { getPieceImage } from "./PieceImages";
 
 export type IconDrawer = (
@@ -498,7 +499,7 @@ const drawAirplane: IconDrawer = (ctx, cx, cy, size) => {
 
 // ============ Brainrots ============
 
-const drawBombardieroCocodrilo: IconDrawer = (ctx, cx, cy, size) => {
+const drawBombardinoCocodrilo: IconDrawer = (ctx, cx, cy, size) => {
   ctx.save();
   // Big crocodile head riding an airplane body
   // Body (plane fuselage)
@@ -580,7 +581,7 @@ export const PIECE_ICONS: Record<string, IconDrawer> = {
 };
 
 export const BRAINROT_ICONS: Record<string, IconDrawer> = {
-  "bombardiero-crocodilo": drawBombardieroCocodrilo,
+  "bombardino-cocodrilo": drawBombardinoCocodrilo,
 };
 
 export function drawPieceIcon(
@@ -636,6 +637,11 @@ export function drawBrainrotIcon(
   cy: number,
   size: number,
 ): void {
+  const img = getBrainrotImage(brainrotId);
+  if (img) {
+    drawImageIcon(ctx, img, cx, cy, size);
+    return;
+  }
   const drawer = BRAINROT_ICONS[brainrotId];
   if (drawer) drawer(ctx, cx, cy, size);
 }

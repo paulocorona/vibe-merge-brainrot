@@ -14,7 +14,13 @@
 // to `/` in dev and to the project subpath (e.g. `/vibe-merge-brainrot/`)
 // on GitHub Pages.
 const PIECE_IMAGE_PATHS: Record<string, string> = {
-  // Machine chain (Bombardiero Cocodrilo's right-hand side).
+  // Creature chain (Bombardino Cocodrilo's left-hand side).
+  "creature-1": "assets/pieces/creature-1.png",
+  "creature-2": "assets/pieces/creature-2.png",
+  "creature-3": "assets/pieces/creature-3.png",
+  "creature-4": "assets/pieces/creature-4.png",
+  "creature-5": "assets/pieces/creature-5.png",
+  // Machine chain (Bombardino Cocodrilo's right-hand side).
   "machine-1": "assets/pieces/machine-1.png",
   "machine-2": "assets/pieces/machine-2.png",
   "machine-3": "assets/pieces/machine-3.png",
