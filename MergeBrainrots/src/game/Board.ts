@@ -1,6 +1,6 @@
 import type { PieceDef } from "./data/pieces";
 
-export const BOARD_SIZE = 5;
+export const BOARD_SIZE = 4;
 
 export interface Cell {
   readonly row: number;

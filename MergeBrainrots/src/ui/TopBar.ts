@@ -1,34 +1,24 @@
 import { GameState } from "../game/GameState";
 
-export interface TopBarHandlers {
-  readonly onCoinAdd: () => void;
-}
-
 export class TopBar {
   private readonly host: HTMLElement;
   private readonly currencyEl: HTMLElement;
   private readonly rateEl: HTMLElement;
   private unsubscribe: (() => void) | null = null;
 
-  constructor(host: HTMLElement, state: GameState, handlers: TopBarHandlers) {
+  constructor(host: HTMLElement, state: GameState) {
     this.host = host;
     this.host.classList.add("top-bar");
     this.host.innerHTML = `
       <div class="coin-pill">
         <div class="coin-icon" aria-hidden="true">$</div>
-        <div>
+        <div class="coin-readout">
           <span class="coin-value" data-role="currency">0</span><span class="coin-rate" data-role="rate"></span>
         </div>
-        <button class="coin-add" data-role="add" aria-label="Add coins">+</button>
       </div>
     `;
     this.currencyEl = this.host.querySelector('[data-role="currency"]') as HTMLElement;
     this.rateEl = this.host.querySelector('[data-role="rate"]') as HTMLElement;
-    const addBtn = this.host.querySelector('[data-role="add"]') as HTMLButtonElement;
-    addBtn.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      handlers.onCoinAdd();
-    });
 
     this.unsubscribe = state.subscribe((snap) => {
       this.currencyEl.textContent = formatNumber(snap.currency);

@@ -22,9 +22,9 @@ export class Spawner {
 
   constructor(config?: Partial<SpawnerConfig>) {
     this.config = {
-      // Full meter in ~12.5s; matches the new 8x8 board so the player
-      // sees a steady trickle of pieces even when not tapping.
-      autoFillRate: config?.autoFillRate ?? 0.04,
+      // Slow trickle (~33s full meter) so tap-to-spawn stays the dominant
+      // input on the tight 4x4 board without choking it with auto-fills.
+      autoFillRate: config?.autoFillRate ?? 0.03,
       tapChunk: config?.tapChunk ?? 0.1,
       pool: config?.pool ?? INITIAL_SPAWN_POOL,
     };

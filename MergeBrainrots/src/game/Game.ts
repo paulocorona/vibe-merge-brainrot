@@ -95,8 +95,8 @@ export class Game {
 
   /**
    * Pre-fills the board with a handful of starter pieces so the player
-   * doesn't open the game to an empty 8x8 grid. Skipped when the board
-   * is already populated (e.g. saved-state hydration in the future).
+   * doesn't open the game to an empty grid. Skipped when the board is
+   * already populated (e.g. saved-state hydration in the future).
    */
   private seedInitialPieces(): void {
     if (!this.board.isEmpty()) return;

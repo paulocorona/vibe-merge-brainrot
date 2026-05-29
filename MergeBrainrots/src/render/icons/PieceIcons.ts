@@ -648,7 +648,7 @@ export function drawBrainrotIcon(
 
 /**
  * Builds a DOM canvas element with the requested piece icon drawn into it.
- * Use this for HTML overlay UIs (IndexModal, RecipeBar, etc.).
+ * Use this for HTML overlay UIs (IndexModal, UnlockPopup, etc.).
  */
 export function createPieceIconCanvas(pieceId: string, sizePx = 48): HTMLCanvasElement {
   return createIconCanvas((ctx, size) => drawPieceIcon(pieceId, ctx, size / 2, size / 2, size), sizePx);

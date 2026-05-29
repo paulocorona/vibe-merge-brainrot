@@ -86,7 +86,7 @@ body {
   max-width: var(--design-width);
   max-height: var(--design-height);
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   gap: 10px;
   padding: 14px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
   /*
@@ -112,7 +112,6 @@ body {
 }
 
 #top-bar,
-#recipe-bar,
 #bottom-bar {
   position: relative;
   z-index: 2;
@@ -127,8 +126,8 @@ body {
   /*
    * Critical: without `min-height: 0` the grid row "1fr" refuses to shrink
    * below the canvas's intrinsic content size, which expands as the
-   * renderer sets the canvas drawing buffer. The 8x8 board exposed this
-   * by pushing the bottom bar off the bottom of the phone frame.
+   * renderer sets the canvas drawing buffer, pushing the bottom bar off
+   * the bottom of the phone frame.
    */
   min-height: 0;
   min-width: 0;
@@ -287,8 +286,8 @@ button {
 .coin-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 6px 4px 12px;
+  gap: 10px;
+  padding: 4px 18px 4px 6px;
   border: 3px solid var(--wood-stroke);
   border-radius: 30px;
   background: linear-gradient(180deg, #ffe27a 0%, #e8a93c 100%);
@@ -296,7 +295,7 @@ button {
     0 4px 0 var(--wood-stroke),
     0 5px 8px rgba(0, 0, 0, 0.25),
     inset 0 2px 0 rgba(255, 255, 255, 0.45);
-  min-width: 150px;
+  min-width: 140px;
   height: 44px;
 }
 
@@ -317,14 +316,18 @@ button {
 }
 
 .coin-value {
-  flex: 1;
   color: var(--text-dark);
   font-weight: 900;
   font-size: 19px;
-  text-align: center;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
   letter-spacing: 0.5px;
+}
+
+.coin-readout {
+  display: flex;
+  align-items: baseline;
+  padding-right: 6px;
 }
 
 .coin-rate {
@@ -332,195 +335,6 @@ button {
   color: rgba(74, 46, 22, 0.7);
   margin-left: 4px;
   font-weight: 700;
-}
-
-.coin-add {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--btn-green-stroke);
-  background: linear-gradient(180deg, var(--btn-green-top) 0%, var(--btn-green-mid) 60%, var(--btn-green-bot) 100%);
-  box-shadow:
-    0 2px 0 var(--btn-green-stroke),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 900;
-  color: #ffffff;
-  text-shadow: var(--text-shadow);
-  line-height: 1;
-  padding: 0 0 3px 0;
-  transition: transform 60ms ease-out;
-}
-
-.coin-add:active {
-  transform: translateY(1px);
-}
-
-/* ============ Side button row (Daily Rewards | Recipe | Shop) ============ */
-
-.recipe-bar {
-  display: grid;
-  grid-template-columns: 72px 1fr 72px;
-  gap: 8px;
-  align-items: stretch;
-}
-
-.side-btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding: 6px 4px;
-  min-height: 92px;
-}
-
-.side-btn .side-btn-icon {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  line-height: 1;
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
-}
-
-.side-btn .side-btn-label {
-  font-weight: 800;
-  font-size: 11px;
-  color: #ffffff;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 4px rgba(0, 0, 0, 0.25);
-  letter-spacing: 0.5px;
-  line-height: 1.05;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-/* ============ Recipe Panel ============ */
-
-.recipe-panel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 6px 8px 8px;
-  border: 3px solid var(--wood-stroke);
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffe9a8 0%, #f2b652 60%, #db8924 100%);
-  box-shadow:
-    0 4px 0 var(--wood-stroke),
-    0 5px 8px rgba(0, 0, 0, 0.25),
-    inset 0 2px 0 rgba(255, 255, 255, 0.45);
-}
-
-.recipe-title {
-  font-weight: 800;
-  font-size: 11px;
-  text-align: center;
-  color: var(--text-dark);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-.recipe-fusion {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 2px;
-  margin-bottom: 4px;
-}
-
-.recipe-fusion canvas {
-  display: block;
-}
-
-.recipe-fusion .rf-sign {
-  color: var(--text-dark);
-  font-weight: 900;
-  font-size: 18px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-.recipe-name {
-  text-align: center;
-  font-weight: 900;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #ffffff;
-  background: var(--wood-stroke);
-  padding: 4px 6px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
-  margin-top: 2px;
-}
-
-.recipe-chains-strip {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
-}
-
-.recipe-chain {
-  display: grid;
-  grid-template-columns: 14px 1fr auto;
-  gap: 6px;
-  align-items: center;
-  font-size: 11px;
-  color: var(--text-dark);
-  font-weight: 800;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
-}
-
-.recipe-chain .rc-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.35);
-}
-
-.recipe-chain.creature {
-  color: #2f5e0e;
-}
-
-.recipe-chain.machine {
-  color: #143769;
-}
-
-.recipe-chain .rc-bar {
-  position: relative;
-  height: 9px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1.5px solid rgba(0, 0, 0, 0.4);
-}
-
-.recipe-chain .rc-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: linear-gradient(180deg, currentColor 0%, currentColor 100%);
-  transition: width 220ms ease-out;
-  border-radius: 4px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.recipe-chain .rc-level {
-  font-variant-numeric: tabular-nums;
-  min-width: 30px;
-  text-align: right;
-  font-weight: 900;
-  font-size: 12px;
 }
 
 /* ============ Bottom Bar ============ */

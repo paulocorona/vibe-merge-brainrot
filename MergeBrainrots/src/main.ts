@@ -7,7 +7,6 @@ import { preloadTileSprite } from "./render/TileSprite";
 import { BottomBar } from "./ui/BottomBar";
 import { ClearConfirm } from "./ui/ClearConfirm";
 import { IndexModal } from "./ui/IndexModal";
-import { RecipeBar } from "./ui/RecipeBar";
 import { TooltipController } from "./ui/Tooltip";
 import { TopBar } from "./ui/TopBar";
 import { UnlockPopup } from "./ui/UnlockPopup";
@@ -22,10 +21,10 @@ async function bootstrap(): Promise<void> {
   );
 
   // Preload art assets before constructing the UI so static icon
-  // canvases (RecipeBar, IndexModal, UnlockPopup) blit the real PNGs
-  // on first paint rather than the procedural fallback. The board
-  // canvas redraws every frame, so even a fire-and-forget preload
-  // would work for it — awaiting just unifies the boot path.
+  // canvases (IndexModal, UnlockPopup) blit the real PNGs on first
+  // paint rather than the procedural fallback. The board canvas
+  // redraws every frame, so even a fire-and-forget preload would
+  // work for it — awaiting just unifies the boot path.
   await Promise.all([
     preloadTileSprite().catch((err) => {
       console.error("[tile-sprite] preload failed", err);
@@ -43,7 +42,6 @@ async function bootstrap(): Promise<void> {
     throw new Error("Canvas element #game-canvas not found");
   }
   const topBarHost = mustGet("top-bar");
-  const recipeBarHost = mustGet("recipe-bar");
   const bottomBarHost = mustGet("bottom-bar");
   const modalRoot = mustGet("modal-root");
   const popupRoot = mustGet("popup-root");
@@ -54,22 +52,7 @@ async function bootstrap(): Promise<void> {
   const game = new Game(canvas, savedState);
   const audio = new AudioManager();
 
-  const openShop = (): void => {
-    audio.resumeOnGesture();
-    audio.play("ui-tap");
-    console.info("[shop] Tapped — coming soon.");
-  };
-  const openDailyRewards = (): void => {
-    audio.resumeOnGesture();
-    audio.play("ui-tap");
-    console.info("[daily-rewards] Tapped — coming soon.");
-  };
-
-  const topBar = new TopBar(topBarHost, game.state, { onCoinAdd: openShop });
-  const recipeBar = new RecipeBar(recipeBarHost, game.state, () => game.getBoard(), {
-    onDailyRewards: openDailyRewards,
-    onShop: openShop,
-  });
+  const topBar = new TopBar(topBarHost, game.state);
   const indexModal = new IndexModal(modalRoot, game.state);
   const tooltips = new TooltipController(tooltipRoot);
   const clearConfirm = new ClearConfirm(popupRoot);
@@ -173,13 +156,11 @@ async function bootstrap(): Promise<void> {
       __game?: Game;
       __audio?: AudioManager;
       __topBar?: TopBar;
-      __recipeBar?: RecipeBar;
       __bottomBar?: BottomBar;
     };
     w.__game = game;
     w.__audio = audio;
     w.__topBar = topBar;
-    w.__recipeBar = recipeBar;
     w.__bottomBar = bottomBar;
   }
 }

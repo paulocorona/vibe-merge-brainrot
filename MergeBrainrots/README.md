@@ -52,7 +52,7 @@ MergeBrainrots/
     game/                       game logic (board, spawner, merge rules, data)
     render/                     canvas renderer + animations + particles
     input/                      pointer/drag handling
-    ui/                         HTML/CSS chrome (top bar, recipe, bottom bar, modal)
+    ui/                         HTML/CSS chrome (top bar, bottom bar, modal)
     audio/                      WebAudio sfx stubs
     persist/                    localStorage save/load
     util/                       rng, easing
@@ -62,21 +62,22 @@ MergeBrainrots/
 
 - 4x4 grid, drag to merge
 - One Brainrot — Bombardino Cocodrilo — with two **5-level** chains
-  - Creature: Egg → Cracked Egg → Hatching Egg → Baby Crocodile → Adult Crocodile
-  - Machine: Gear → Screw & Nut → Turbine → Motor → Airplane
-- Cartoon visual reskin: bright sky/water background, green tiles on
-  wooden pedestals, big bold cartoon buttons
-- Procedural placeholder icons (replaceable via `src/render/icons/PieceIcons.ts`)
-- Top button row: **Daily Rewards** (left) and **Shop** (right), both
-  visual-only placeholders for now (they log on tap)
+  - Creature: Egg → Cracked Egg → Baby Croc → Young Croc → Adult Croc
+  - Machine: Gear → Screw & Nut → Spark Plug → Motor → Airplane
+- Cartoon visual reskin: bright sky/water background, rarity-tinted tiles
+  on wooden pedestals, big bold cartoon buttons
+- PNG art for piece chains and the Bombardino Cocodrilo portrait, with
+  procedural fallbacks for anything missing (`src/render/icons/PieceIcons.ts`)
+- Top bar: lone coin pill (live currency + passive income readout)
 - Tap-to-spawn with a progress meter and a hidden lagging-chain bias
 - Combo system with juicy merge feedback (pop, particles, sparkles)
-- INDEX modal with one card and recipe preview
+- INDEX modal with one Brainrot card (rarity badge + tagline)
 - Brainrot unlock popup with light-ray reveal
 - Spawn-button upgrade still wired up under the hood — it will surface in
-  the Shop screen when that is built
+  a future Shop screen
 - Currency + passive income per unlocked Brainrot
-- localStorage persistence (currency, INDEX, upgrades)
+- localStorage persistence (currency, INDEX, upgrades) with stale-state
+  healing for renamed brainrots
 
 ## Swapping in real art
 
